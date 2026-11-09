@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+catboost_info/
+*.aux
+*.log
+*.synctex.gz
+*.out
+.DS_Store

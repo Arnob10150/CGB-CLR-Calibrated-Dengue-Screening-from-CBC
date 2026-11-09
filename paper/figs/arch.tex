@@ -1,0 +1,92 @@
+\begin{figure}[!htbp]
+\centering
+\scriptsize
+\begin{tikzpicture}[
+  font=\scriptsize,
+  >={Latex[length=1.5mm,width=1.1mm]},
+  node distance=4mm,
+  % base 3D-extruded block: the solid offset shadow is the extruded side
+  blk/.style={draw, line width=0.5pt, rounded corners=0.6pt, align=center,
+    inner sep=2.3pt, minimum width=12mm, minimum height=6.0mm},
+  aud/.style={blk, draw=blue!70!black, top color=blue!10, bottom color=blue!40,
+    general shadow={shadow xshift=0.9mm, shadow yshift=-0.9mm, opacity=1,
+                    fill=blue!55!black}},
+  pre/.style={blk, draw=green!55!black, top color=green!10, bottom color=green!42,
+    general shadow={shadow xshift=0.9mm, shadow yshift=-0.9mm, opacity=1,
+                    fill=green!45!black}},
+  mdl/.style={blk, draw=purple!70!black, top color=purple!10,
+    bottom color=purple!42,
+    general shadow={shadow xshift=0.9mm, shadow yshift=-0.9mm, opacity=1,
+                    fill=purple!55!black}},
+  io/.style={blk, draw=black!50, top color=black!3, bottom color=black!20,
+    general shadow={shadow xshift=0.9mm, shadow yshift=-0.9mm, opacity=1,
+                    fill=black!45}},
+  % hexagon = compositional / calibration transform
+  hex/.style={draw=green!55!black, line width=0.5pt, regular polygon,
+    regular polygon sides=6, top color=green!10, bottom color=green!42,
+    inner sep=0.3pt, align=center, minimum width=10mm,
+    general shadow={shadow xshift=0.9mm, shadow yshift=-0.9mm, opacity=1,
+                    fill=green!45!black}},
+  hexc/.style={hex, draw=purple!70!black, top color=purple!10,
+    bottom color=purple!42,
+    general shadow={shadow xshift=0.9mm, shadow yshift=-0.9mm, opacity=1,
+                    fill=purple!55!black}},
+  % diamond = conformal decision router
+  dec/.style={draw=orange!75!black, line width=0.5pt, diamond, aspect=2.3,
+    top color=orange!14, bottom color=orange!52, inner sep=0.4pt, align=center,
+    general shadow={shadow xshift=0.9mm, shadow yshift=-0.9mm, opacity=1,
+                    fill=orange!60!black}},
+  % cylinder = audited data store
+  cyl/.style={draw=blue!60!black, line width=0.5pt, cylinder,
+    shape aspect=0.3, shape border rotate=90, aspect=0.5,
+    top color=blue!10, bottom color=blue!40, align=center, inner sep=1.4pt,
+    minimum width=10mm, minimum height=7mm,
+    general shadow={shadow xshift=0.9mm, shadow yshift=-0.9mm, opacity=1,
+                    fill=blue!55!black}},
+  % outcome pill
+  pill/.style={draw=black!45, line width=0.4pt, rounded corners=4pt,
+    align=center, top color=black!2, bottom color=black!12, inner sep=2.0pt,
+    general shadow={shadow xshift=0.6mm, shadow yshift=-0.6mm, opacity=1,
+                    fill=black!25}},
+  flow/.style={->, draw=black!70, line width=0.6pt},
+  lyr/.style={font=\scriptsize\itshape},
+]
+
+% ===== layer 1 : data integrity =====
+\node[io] (raw) {raw CBC\\$1{,}523$};
+\node[aud, right=5mm of raw] (audit) {integrity\\audit};
+\node[cyl, right=5mm of audit] (clean) {clean\\$1{,}505$};
+\node[lyr, text=blue!55!black, above=1.0mm of audit.north] {data integrity};
+\draw[flow] (raw) -- (audit);
+\draw[flow] (audit) -- (clean);
+
+% ===== layer 2 : compositional preprocessing =====
+\node[hex, below=7mm of clean] (clr) {CLR\\$z_i$};
+\node[pre, left=5mm of clr] (std) {standardize\\(train only)};
+\node[lyr, text=green!45!black, above=0.8mm of clr.north east, anchor=south west]
+  {compositional};
+\draw[flow] (clean) -- (clr);
+\draw[flow] (clr) -- (std);
+
+% ===== layer 3 : calibrated learning =====
+\node[mdl, below=7mm of std] (gb) {gradient\\boosting};
+\node[hexc, right=6mm of gb] (iso) {isotonic\\$\hat p$};
+\node[lyr, text=purple!60, above=0.8mm of gb.north west, anchor=south west]
+  {calibrated learning};
+\draw[flow] (std) -- (gb);
+\draw[flow] (gb) -- (iso);
+
+% ===== layer 4 : selective deployment =====
+\node[dec, below=7mm of iso] (conf) {conformal\\set};
+\node[pill, below left=7mm and -2mm of conf] (label) {screen\\label};
+\node[pill, below right=7mm and -2mm of conf] (defer) {defer:\\NS1/PCR};
+\node[lyr, text=orange!70!black, align=center, right=3mm of conf.east]
+  {selective\\output};
+\draw[flow] (iso) -- (conf);
+\draw[flow] (conf) -- node[left,pos=0.4,font=\tiny] {singleton} (label);
+\draw[flow] (conf) -- node[right,pos=0.4,font=\tiny] {ambiguous} (defer);
+
+\end{tikzpicture}
+\caption{Audit-aware CBC screening pipeline.}
+\label{fig:arch}
+\end{figure}
