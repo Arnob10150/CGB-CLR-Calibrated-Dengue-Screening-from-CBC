@@ -323,7 +323,8 @@ reference and calibration curves, with tuning confined to training folds.
 Figure~\ref{fig:arch} shows the pipeline: an integrity gate feeds the
 compositional-plus-ratio representation into the calibrated ensemble, whose
 risk drives a conformal router emitting a label only for confidently singleton
-profiles and otherwise deferring; Listing~\ref{lst:cgb} states the procedure.
+profiles and otherwise deferring (Listing~\ref{lst:cgb}); code at
+\url{https://github.com/Arnob10150/CGB-CLR-Calibrated-Dengue-Screening-from-CBC}.
 
 \input{figs/arch}
 
@@ -608,10 +609,6 @@ not reach significance at this sample size. Future work should obtain
 reference-standard-confirmed, prospective, multi-country cohorts with the full
 differential, nested threshold selection, and illness-day information before
 clinical use.
-
-\emph{Code and data availability:} All analysis code, cohort data, and
-results underlying this paper are available at
-\url{https://github.com/Arnob10150/CGB-CLR-Calibrated-Dengue-Screening-from-CBC}.
 
 \begin{thebibliography}{00}
 \footnotesize
